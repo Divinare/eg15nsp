@@ -1,22 +1,13 @@
 {
-  "name": "backend",
-  "version": "1.0.0",
-  "description": "node.js backend for eg15nsp",
-  "main": "index.js",
-  "scripts": {
-    "test": "test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Divinare/eg15nsp"
-  },
-  "author": "Zanttu, mxO, Div",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Divinare/eg15nsp/issues"
-  },
-  "homepage": "https://github.com/Divinare/eg15nsp",
+  "name": "application-name",
+  "version": "0.0.1",
+  "private": true,
   "dependencies": {
-    "express": "^4.12.3"
+    "body-parser": "^1.0.2",
+    "errorhandler": "^1.0.1",
+    "express": "~4.1.1",
+    "jade": "~0.31.2",
+    "method-override": "^1.0.0",
+    "morgan": "^1.0.0"
   }
 }
