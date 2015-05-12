@@ -7,43 +7,19 @@ var sqlite3 = require('sqlite3').verbose();
 var Models = require('../models');
 
 
-
-
-
-
 exports.index = function(req,res) {
-
-
 	Models.Measurement.findAll().then(function(measurements){
-	  	console.log(measurements);
 		res.json(measurements);
 	});
 
 };
 
+exports.sensor = function( req, res) {
+	var sensorId = req.params.id;
+	Models.Measurement.findOne({
+		  where: { id: sensorId}
+	}).then(function( sensor) {
+	      res.json(sensor);
+	})
 
-
-/*
-exports.index = function(req, res){
-  //res.render('index');
-
-  Models.Measurement.findAll().then(function(measurements){
-	  console.log(measurements);
-	  res.json(measurements);
-
-});
-
-  res.send('hello world');
-};
-*/
-
-exports.partials = function (req, res) {
-  var name = req.params.name;
-  res.render('partials/' + name);
-};
-
-/*
-app.get('/', function(req, res) {
-  res.send('hello world');
-});
-*/
+}
