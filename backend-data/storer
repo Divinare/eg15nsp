@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+import argparse
+import logging
+import time
+import platform
+import math
+import re
+import json
+import iso8601
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import table, column, select, update
+from datetime import datetime
+import paho.mqtt.client as mqtt
+
+def main():
+    logging.basicConfig()
+    logger = logging.getLogger('storer')
+
+    parser = argparse.ArgumentParser(prog="storer")
+
+    parser.add_argument('--debug', '-d',
+                        action='store_const',
+                        const=logging.DEBUG,
+                        dest='logging')
+
+    parser.add_argument('--quiet', '-q',
+                        action='store_const',
+                        const=logging.WARNING,
+                        dest='logging')
+
+    parser.add_argument('--database', type=str,
+                        default="sqlite:///database.sqlite")
+
+    parser.add_argument('--broker', '-b', default="localhost", type=str)
+    parser.add_argument('--broker-port', '-p', default=1883, type=int)
+
+    parser.set_defaults(logging=logging.INFO)
+    args = parser.parse_args()
+    logging.getLogger().setLevel(args.logging)
+
+    logger.debug("args=%r", args)
+
+    engine = create_engine(args.database)
+    new_session = sessionmaker(bind=engine)
+    logger.debug("engine=%r new_session=%r", engine, new_session)
+
+    client = mqtt.Client()
+    logger.debug("client=%r", client)
+    client.connect(args.broker, args.broker_port)
+
+    def on_message(client, data, message):
+        logger.debug("on_message: message.topic=%r message.payload=%r",
+                    message.topic, message.payload)
+
+        m = re.match(r'node/(\d+)/(.*)', message.topic)
+        assert m
+
+        device_id = int(m.group(1))
+        path = m.group(2)
+
+        logger.debug("node id=%d path=%r", device_id, path)
+
+        if path == 'active':
+            logger.debug("node active mark")
+            engine.execute('update devices set last_active = ? where id = ?',
+                            message.payload, device_id)
+        elif path[0:7] == 'sensor/':
+            payload = json.loads(message.payload.decode('utf-8'))
+            device_type = path[7:]
+            logger.debug("sensor type=%r", type)
+            sensor_id, = engine.execute(
+                'select id from sensors where device_id = ? and type = ?',
+                device_id, device_type).first()
+            logger.debug("sensor id=%r", sensor_id)
+            engine.execute('insert into measurements (device_id, sensor_id, '
+                           'sensed_time, stored_time, value) '
+                           'values (?, ?, ?, ?, ?)',
+                           device_id,
+                           sensor_id,
+                           iso8601.parse_date(payload['time']).isoformat(),
+                           datetime.now().isoformat(),
+                           float(payload['value']))
+
+            logger.info("%d.%d @ %s = %-10s (%s)",
+                        device_id, sensor_id,
+                        iso8601.parse_date(payload['time']),
+                        float(payload['value']), device_type)
+
+    client.on_message = on_message
+    client.subscribe('node/+/#')
+
+    client.loop_forever()
+
+if __name__ == "__main__":
+    main()

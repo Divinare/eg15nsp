@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+import argparse
+import logging
+import time
+import platform
+import math
+import json
+from datetime import datetime
+import paho.mqtt.client as mqtt
+
+def main():
+    logging.basicConfig()
+    logger = logging.getLogger('collector')
+
+    parser = argparse.ArgumentParser(prog="collector")
+
+    parser.add_argument('--debug', '-d',
+                        action='store_const',
+                        const=logging.DEBUG,
+                        dest='logging')
+
+    parser.add_argument('--quiet', '-q',
+                        action='store_const',
+                        const=logging.WARNING,
+                        dest='logging')
+
+    parser.add_argument('--interval', '-i', default=60, type=int)
+    parser.add_argument('--broker', '-b', default="localhost", type=str)
+    parser.add_argument('--broker-port', '-p', default=1883, type=int)
+    parser.add_argument('--mock', action='store_true', default=False,
+                        help='Send mock temperature measurement values')
+
+    parser.add_argument('id', type=str,
+                        help='Node identifier')
+
+    parser.set_defaults(logging=logging.INFO)
+    args = parser.parse_args()
+    logging.getLogger().setLevel(args.logging)
+
+    logger.debug("args=%r", args)
+
+    client = mqtt.Client()
+    client.connect(args.broker, args.broker_port)
+    client.loop_start()
+
+    logger.debug("client=%r", client)
+
+    def topic(n):
+        return "node/" + args.id + "/" + n
+
+    while True:
+        logger.debug("Measuring ...")
+
+        values = {}
+
+        ## TODO MEASUREMENTS HERE
+        if args.mock:
+            values['temperature'] = "%.2f" % (23.5 + math.sin(time.time() / 600) * 5,)
+        else:
+            pass
+
+        for k, v in values.items():
+            t = topic("sensor/" + k)
+            logger.debug("Sending %s = %s", t, v)
+            client.publish(t,
+                           payload=json.dumps(
+                               {'value': v,
+                                'time': datetime.now().isoformat()}))
+
+        t = topic("active")
+        logger.debug("Sending alive signal to %s", t)
+        client.publish(t, payload=datetime.now().isoformat())
+
+        logger.debug("Sleeping for %ds", args.interval)
+        time.sleep(args.interval)
+
+if __name__ == "__main__":
+    main()

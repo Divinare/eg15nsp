@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS devices;
 CREATE TABLE devices (
        id INTEGER NOT NULL,
        description TEXT,
+       last_active DATETIME,
        PRIMARY KEY (id));
 
 CREATE TABLE sensors (
@@ -30,8 +31,8 @@ CREATE TABLE measurements (
 	FOREIGN KEY(sensor_id) REFERENCES sensors (id));
 
 -- dummy test data
-INSERT INTO devices (id, description) VALUES
-       (1, 'Plant box');
+INSERT INTO devices (id, description, last_active) VALUES
+       (1, 'Plant box', NULL);
 INSERT INTO sensors (id, device_id, type, description) VALUES
        (1, 1, 'temperature', 'Temperature sensor');
 INSERT INTO measurements (id, device_id, sensor_id, sensed_time, createdAt, updatedAt, stored_time, value) VALUES

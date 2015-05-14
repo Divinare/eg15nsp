@@ -1,2 +1,5 @@
 /backend/node_modules
 npm-debug.log
+.vagrant/
+*.db
+*.sqlite
