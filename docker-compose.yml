@@ -3,7 +3,7 @@ broker:
   ports:
     - "1883:1883"
 storer:
-  build: backend-data
+  build: storer
   links:
     - broker
   volumes:
