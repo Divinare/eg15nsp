@@ -10,8 +10,8 @@ storer:
     - shared:/shared
   environment:
     - STORER_DB=sqlite:////shared/database.sqlite
-backend:
-  build: backend
+api:
+  build: backend-api
   volumes:
     - shared:/shared
   ports:

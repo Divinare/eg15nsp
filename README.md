@@ -18,10 +18,13 @@ Quick overview of components and directories:
 
 	* MQTT broker (that is bridged to from raspi)
 
-* UI and front-end (`frontend` and `backend`)
+* API Backend (`backend-api`)
 
-    * Node.js server-side code to provide REST API to fetch
-      measurements and set control values
+	* Node application providing REST API to the measurement and
+	  device data
+
+* UI Browser App (`frontend`)
+
 	* Browser application to do all the fancy UI stuff
 
 ## How to run locally
@@ -98,3 +101,7 @@ and correspondingly on the `docker-compose` window:
     broker_1 | 1431709843: New client connected from 192.168.99.1 as paho/F871883EEC43CD9D57.
     storer_1 | INFO:storer:1.1 @ 2015-05-15 20:10:44.637692+00:00 = 19.14      (temperature)
     storer_1 | INFO:storer:1.1 @ 2015-05-15 20:11:44.640284+00:00 = 19.41      (temperature)
+
+Then you should be able to access also the REST API:
+
+    $ wget -qO- http://localhost:3000/
