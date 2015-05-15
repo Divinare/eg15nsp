@@ -87,8 +87,18 @@ def main():
                         iso8601.parse_date(payload['time']),
                         float(payload['value']), device_type)
 
+    def on_connect(client, userdata, flags, rc):
+        logger.info("Connected")
+
+    def on_disconnect(client, userdata, rc):
+        logger.info("Disconnected")
+
+    client.on_connect = on_connect
     client.on_message = on_message
     client.subscribe('node/+/#')
+
+    logger.info("storer: Reading from %s:%s, storing to %s",
+                args.broker, args.broker_port, args.database)
 
     client.loop_forever()
 

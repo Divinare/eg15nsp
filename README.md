@@ -58,3 +58,43 @@ should be valid for our environment, but additional options may be
 given:
 
     $ ./storer --database mysql://user:pass@localhost/name --debug --broker 127.0.0.2 --broker-port 1884
+
+## Running test environment under Docker
+
+Fist ensure you have Docker and Docker Compose correctly set up:
+
+    $ docker -v
+    $ docker-compose -v
+
+You'll need a working database in the `shared` directory:
+
+    $ sqlite3 shared/database.sqlite <schema.sql
+
+Build and run the setup:
+
+    $ docker-compose build
+    $ docker-compose up
+
+Now you should be able to use the `collector` in mock mode (in another
+terminal window):
+
+    $ raspi/collector --mock 1
+
+This should generate something like this on the mock collector output:
+
+    INFO:collector:Sending mock temperature 19.14°C
+    INFO:collector:Sending mock temperature 19.41°C
+
+and correspondingly on the `docker-compose` window:
+
+    broker_1 | 1431709838: mosquitto version 0.15 (build date 2013-08-23 19:23:43+0000) starting
+    broker_1 | 1431709838: Opening ipv4 listen socket on port 1883.
+    broker_1 | 1431709838: Opening ipv6 listen socket on port 1883.
+    broker_1 | 1431709840: New connection from 172.17.0.39.
+    broker_1 | 1431709840: New client connected from 172.17.0.39 as paho/DF70C67C6C7EDD79F1.
+    storer_1 | INFO:storer:storer: Reading from broker:1883, storing to sqlite:////shared/database.sqlite
+    storer_1 | INFO:storer:Connected
+    broker_1 | 1431709843: New connection from 192.168.99.1.
+    broker_1 | 1431709843: New client connected from 192.168.99.1 as paho/F871883EEC43CD9D57.
+    storer_1 | INFO:storer:1.1 @ 2015-05-15 20:10:44.637692+00:00 = 19.14      (temperature)
+    storer_1 | INFO:storer:1.1 @ 2015-05-15 20:11:44.640284+00:00 = 19.41      (temperature)

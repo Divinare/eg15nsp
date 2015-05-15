@@ -1,0 +1,12 @@
+broker:
+  build: backend-broker
+  ports:
+    - "1883:1883"
+storer:
+  build: backend-data
+  links:
+    - broker
+  volumes:
+    - shared:/shared
+  environment:
+    - STORER_DB=sqlite:////shared/database.sqlite
