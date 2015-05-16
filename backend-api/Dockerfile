@@ -6,3 +6,4 @@ RUN npm install
 COPY . /data
 CMD node app.js
 EXPOSE 3000
+ENV LANG C.UTF-8

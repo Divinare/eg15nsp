@@ -1,9 +1,10 @@
-DATABASE = database.sqlite
+DATABASE = shared/database.sqlite
 
 all:
 
-setup-database: schema.sql
-	sqlite3 $(DATABASE) < schema.sql
+mock: $(DATABASE)
+	docker-compose build
+	docker-compose up
 
-setup-server:
-	apt-get install mosquitto mosquitto-clients
+$(DATABASE):
+	sqlite $(DATABASE) < schema.sql

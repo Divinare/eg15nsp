@@ -2,6 +2,8 @@ broker:
   build: backend-broker
   ports:
     - "1883:1883"
+  volumes:
+    - shared:/shared
 storer:
   build: backend-storer
   links:
@@ -18,3 +20,7 @@ api:
     - "3000:3000"
   environment:
     - BACKEND_SQLITE_DB=/shared/database.sqlite
+mock:
+  build: raspi
+  links:
+    - broker
