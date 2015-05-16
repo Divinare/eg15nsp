@@ -74,10 +74,6 @@ generator:
 
     $ make mock
 
-You'll need a working database in the `shared` directory:
-
-    $ sqlite3 shared/database.sqlite <schema.sql
-
 You should be seeing something like this occur (among all other
 output):
 
