@@ -15,8 +15,9 @@ var App = React.createClass({
 
   render: function() {
     return (
-      <div>
+      <div className="callout panel">
         <h1>Moi</h1>
+        <p>ok</p>
       </div>
     );
   }
