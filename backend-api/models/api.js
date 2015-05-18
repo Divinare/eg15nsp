@@ -12,6 +12,14 @@ var Measurement = Database.sequelize.define('Measurement', {
 
 });
 
+var Sensor = Database.sequelize.define('Sensor', {
+  id: { type: Database.DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+  device_id: Database.DataTypes.INTEGER,
+  type: Database.DataTypes.STRING,
+  description: Database.DataTypes.TEXT
+});
+
 module.exports = {
-	Measurement: Measurement
+	Measurement: Measurement,
+	Sensor: Sensor
 };
