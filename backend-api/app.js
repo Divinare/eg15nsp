@@ -3,14 +3,12 @@ var express = require('express'),
   bodyParser = require('body-parser'),
   methodOverride = require('method-override'),
   errorhandler = require('errorhandler'),
-  morgan = require('morgan'),
   api = require('./routes/api'),
   http = require('http'),
   path = require('path');
 
 
 app.set('port', process.env.PORT || 3000)
-  .use(morgan('dev'))
   .use(bodyParser())
   .use(methodOverride())
   .use(express.static('build'))

@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS measurements;
 DROP TABLE IF EXISTS sensors;
 DROP TABLE IF EXISTS devices;
 
-CREATE TABLE devices (
+CREATE TABLE devices ( -- pot
        id INTEGER NOT NULL,
        description TEXT,
        last_active DATETIME,
@@ -28,16 +28,21 @@ CREATE TABLE measurements (
 	FOREIGN KEY(device_id) REFERENCES devices (id),
 	FOREIGN KEY(sensor_id) REFERENCES sensors (id));
 
-CREATE TABLE lightlevels (
-       rgb_red_current INTEGER NOT NULL,
-       rgb_red_updated INTEGER NOT NULL,
-       rgb_blue_current INTEGER NOT NULL,
-       rgb_blue_updated INTEGER NOT NULL,
-       rgb_yellow_current INTEGER NOT NULL,
-       rgb_yellow_updated INTEGER NOT NULL,
-       uv_current INTEGER NOT NULL,
-       uv_updated INTEGER NOT NULL
-       );
+CREATE TABLE controls (
+       id INTEGER NOT NULL,
+       device_id INTEGER NOT NULL,
+       type VARCHAR(32) NOT NULL,
+       description TEXT,
+       PRIMARY KEY(id)
+       FOREIGN KEY(device_id) REFERENCES devices (id));
+
+CREATE TABLE values (
+       control_id INTEGER NOT NULL,
+       current DOUBLE,
+       target DOUBLE,
+       current_time DATETIME,
+       target_time DATETIME,
+       PRIMARY KEY(control_id) REFERENCES controls (id));
 
 -- dummy test data
 INSERT INTO devices (id, description, last_active) VALUES
@@ -50,5 +55,14 @@ INSERT INTO measurements (id, device_id, sensor_id, sensed_time, createdAt, upda
        (3, 1, 1, '2015-05-11T11:06:00', '2015-05-11T11:07:00', 24.2),
        (4, 1, 1, '2015-05-11T11:06:30', '2015-05-11T11:07:00', 23.9),
        (5, 1, 1, '2015-05-11T11:07:00', '2015-05-11T11:07:00', 24.1);
-INSERT INTO lightlevels
-       (100, 100, 110, 110, 120, 120, 50, 50);
+INSERT INTO controls (id, device_id, type, description) VALUES
+       (1, 1, 'light/red', 'RED led'),
+       (2, 1, 'light/green', 'RED led'),
+       (3, 1, 'light/blue', 'RED led'),
+       (4, 1, 'light/uv', 'RED led');
+ INSERT INTO values (control_id, target, target_time) VALUES
+       (1, .5, '2015-05-18T12:30'),
+       (2, .5, '2015-05-18T12:30'),
+       (3, .5, '2015-05-18T12:30'),
+       (4, .5, '2015-05-18T12:30');
+       
