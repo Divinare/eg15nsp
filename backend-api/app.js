@@ -28,7 +28,7 @@ if (env === 'production') {
   // TODO
 }
 
-
+// API Routes
 app.get('/api/sensors', api.sensors);
 app.get('/api/measurements', api.measurements);
 app.get('/api/measurements/:id', api.measurement);
