@@ -19,6 +19,9 @@ var Sensor = Database.sequelize.define('Sensor', {
   description: Database.DataTypes.TEXT
 });
 
+//var Lightlevel
+
+
 module.exports = {
 	Measurement: Measurement,
 	Sensor: Sensor

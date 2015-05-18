@@ -28,6 +28,17 @@ CREATE TABLE measurements (
 	FOREIGN KEY(device_id) REFERENCES devices (id),
 	FOREIGN KEY(sensor_id) REFERENCES sensors (id));
 
+CREATE TABLE lightlevels (
+       rgb_red_current INTEGER NOT NULL,
+       rgb_red_updated INTEGER NOT NULL,
+       rgb_blue_current INTEGER NOT NULL,
+       rgb_blue_updated INTEGER NOT NULL,
+       rgb_yellow_current INTEGER NOT NULL,
+       rgb_yellow_updated INTEGER NOT NULL,
+       uv_current INTEGER NOT NULL,
+       uv_updated INTEGER NOT NULL
+       );
+
 -- dummy test data
 INSERT INTO devices (id, description, last_active) VALUES
        (1, 'Plant box', NULL);
@@ -39,3 +50,5 @@ INSERT INTO measurements (id, device_id, sensor_id, sensed_time, createdAt, upda
        (3, 1, 1, '2015-05-11T11:06:00', '2015-05-11T11:07:00', 24.2),
        (4, 1, 1, '2015-05-11T11:06:30', '2015-05-11T11:07:00', 23.9),
        (5, 1, 1, '2015-05-11T11:07:00', '2015-05-11T11:07:00', 24.1);
+INSERT INTO lightlevels
+       (100, 100, 110, 110, 120, 120, 50, 50);

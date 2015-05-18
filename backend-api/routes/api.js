@@ -27,3 +27,9 @@ exports.sensors = function (req, res) {
 		res.json(sensors);
 	});
 };
+
+exports.lightlevel = function (req, res) {
+	Models.Lightlevel.findAll().then(function(sensors){
+		res.json(sensors);
+	});
+};

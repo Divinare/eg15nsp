@@ -8,10 +8,8 @@ var express = require('express'),
   http = require('http'),
   path = require('path');
 
-var ;
 
-
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 3000)
   .use(morgan('dev'))
   .use(bodyParser())
   .use(methodOverride())
@@ -32,6 +30,10 @@ if (env === 'production') {
 app.get('/api/sensors', api.sensors);
 app.get('/api/measurements', api.measurements);
 app.get('/api/measurements/:id', api.measurement);
+
+//app.get('api/lightlevel', api.lightlevel);
+
+//app.post('/api/lightlevel/', api.lightlevel);
 
 http.createServer(app).listen(app.get('port'), function () {
   console.log('Express server listening on port ' + app.get('port'));
