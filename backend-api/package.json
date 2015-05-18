@@ -13,19 +13,21 @@
     "morgan": "^1.0.0"
   },
   "devDependencies": {
-    "vinyl-source-stream": "~1.1.0",
-    "gulp": "~3.8.11",
-    "browserify": "~10.2.0",
     "babelify": "~6.1.1",
     "body-parser": "~1.12.4",
-    "jquery": "~2.1.4",
+    "browserify": "~10.2.0",
+    "gulp": "~3.8.11",
+    "gulp-concat": "~2.5.2",
+    "gulp-html-replace": "~1.4.5",
+    "gulp-livereload": "^3.8.0",
     "gulp-react": "~3.0.1",
     "gulp-sourcemaps": "~1.5.2",
-    "gulp-concat": "~2.5.2",
     "gulp-uglify": "~1.2.0",
-    "gulp-html-replace": "~1.4.5",
-    "watchify": "~3.2.1",
+    "jquery": "~2.1.4",
+    "react": "^0.13.3",
     "reactify": "~1.1.1",
-    "superagent": "~1.2.0"
+    "superagent": "~1.2.0",
+    "vinyl-source-stream": "~1.1.0",
+    "watchify": "~3.2.1"
   }
 }
