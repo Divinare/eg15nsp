@@ -4,6 +4,9 @@ var React = require('react');
 var $ = require('jquery');
 var request = require('superagent');
 
+// Components
+var Nav = require('./comp/Nav');
+
 var App = React.createClass({
 
   getInitialState: function() {
@@ -15,9 +18,8 @@ var App = React.createClass({
 
   render: function() {
     return (
-      <div className="callout panel">
-        <h1>Moi</h1>
-        <p>ok</p>
+      <div>
+        <Nav />
       </div>
     );
   }
