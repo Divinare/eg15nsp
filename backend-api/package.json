@@ -1,5 +1,5 @@
 {
-  "name": "Exactum Greenhouse 2015 - NSP",
+  "name": "EG2015NSP",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
@@ -11,5 +11,21 @@
     "sequelize": "^2.0.5",
     "sqlite3": "^3.0.8",
     "morgan": "^1.0.0"
+  },
+  "devDependencies": {
+    "vinyl-source-stream": "~1.1.0",
+    "gulp": "~3.8.11",
+    "browserify": "~10.2.0",
+    "babelify": "~6.1.1",
+    "body-parser": "~1.12.4",
+    "jquery": "~2.1.4",
+    "gulp-react": "~3.0.1",
+    "gulp-sourcemaps": "~1.5.2",
+    "gulp-concat": "~2.5.2",
+    "gulp-uglify": "~1.2.0",
+    "gulp-html-replace": "~1.4.5",
+    "watchify": "~3.2.1",
+    "reactify": "~1.1.1",
+    "superagent": "~1.2.0"
   }
 }
