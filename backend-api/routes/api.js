@@ -1,11 +1,8 @@
 
-var express = require('express');
-var router = express.Router();
-
-var sqlite3 = require('sqlite3').verbose();
-
-//var db = new sqlite3.Database('../../database.sqlite');
-var Models = require('../models/api.js');
+var express = require('express'),
+		router = express.Router(),
+		sqlite3 = require('sqlite3').verbose(),
+		Models = require('../models/api.js');
 
 
 exports.measurements = function(req,res) {
@@ -18,9 +15,9 @@ exports.measurements = function(req,res) {
 exports.measurement = function( req, res) {
 	var sensorId = req.params.id;
 	Models.Measurement.findOne({
-		  where: { id: sensorId}
+		where: { id: sensorId}
 	}).then(function( sensor) {
-	      res.json(sensor);
+		res.json(sensor);
 	})
 
 }
