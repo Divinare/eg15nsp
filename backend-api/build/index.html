@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+  </head>
+  <body ng-app="gameReviewApp">
+
+ <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#/">Home</a>
+        </div>
+
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="#about">About</a></li>
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#review">Review a game</a></li>
+            <li><a href="#game">Add a game</a></li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Categories<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#category/1/">Strategy</a></li>
+                <li><a href="#category/2/">RPG</a></li>
+                <li><a href="#category/3/">Shooter</a></li>
+                <li class="divider"></li>
+                <li><a href="#category/4/">Others</a></li>
+                <li><a href="#/">See all games</a></li>
+              </ul>
+            </li>
+            
+          </ul>
+        </div>
+      </div>
+    </nav>
+      
+    <div class="container">
+       <div ng-view=""></div>
+    </div>
+
+
+    <div class="footer">
+      <div class="container">
+      </div>
+    </div>
+
+
+</body>
+</html>

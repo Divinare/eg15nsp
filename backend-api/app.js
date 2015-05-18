@@ -8,13 +8,16 @@ var express = require('express'),
   methodOverride = require('method-override'),
   errorhandler = require('errorhandler'),
   morgan = require('morgan'),
-  routes = require('./routes'),
-  api = require('./routes/api'),
+  routes = require('./routes/api'),
+  api = require('./routes/'),
   http = require('http'),
   path = require('path');
 
 var app = module.exports = express();
 
+    app
+    .use(express.static('build'))
+    .use(bodyParser.json());
 
 /**
  * Configuration
@@ -47,9 +50,9 @@ if (env === 'production') {
  */
 
 // serve index and view partials
-app.get('/', routes.index);
+app.get('/api/', routes.all);
 
-app.get('/sensor/:id', routes.sensor);
+app.get('/api/sensor/:id', routes.sensor);
 
 //app.get('/partials/:name', routes.partials);
 
@@ -57,7 +60,9 @@ app.get('/sensor/:id', routes.sensor);
 app.get('/api/name', api.name);
 
 // redirect all others to the index (HTML5 history)
-app.get('*', routes.index);
+
+// tähän frontendin index:
+//app.get('/', routes.index);
 
 
 /**

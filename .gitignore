@@ -1,4 +1,4 @@
-/backend/node_modules
+/backend-api/node_modules
 npm-debug.log
 .vagrant/
 *.db
