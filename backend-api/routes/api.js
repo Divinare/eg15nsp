@@ -28,8 +28,8 @@ exports.sensors = function (req, res) {
 	});
 };
 
-exports.lightlevel = function (req, res) {
-	Models.Lightlevel.findAll().then(function(sensors){
-		res.json(sensors);
+exports.controls = function (req, res) {
+	Models.Control.findAll().then(function(controls){
+		res.json(controls);
 	});
 };
