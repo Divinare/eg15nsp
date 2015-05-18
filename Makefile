@@ -6,5 +6,5 @@ mock: $(DATABASE)
 	docker-compose build
 	docker-compose up
 
-$(DATABASE):
-	sqlite $(DATABASE) < schema.sql
+$(DATABASE): schema.sql
+	sqlite3 $(DATABASE) < schema.sql
