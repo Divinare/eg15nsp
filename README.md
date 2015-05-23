@@ -101,7 +101,12 @@ Then you should be able to access also the REST API:
 *This is just notes to keep them somewhere accessible.*
 
 Raspi is on `Hacklab` network, using DHCP, at least recently at
-address `192.168.110.137`.
+address `192.168.110.137`. Login to it is user `pi` with password
+`pee1aiQuiuFo`. Please, after login, set up your own account with:
+
+    sudo -s
+    useradd -m -G sudo,i2c,spi,gpio <username>
+    passwd <username>
 
 # Backend Server
 
