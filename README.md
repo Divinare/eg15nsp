@@ -95,3 +95,15 @@ output):
 Then you should be able to access also the REST API:
 
     $ wget -qO- http://localhost:3000/
+
+# HackLab Environment
+
+*This is just notes to keep them somewhere accessible.*
+
+Raspi is on `Hacklab` network, using DHCP, at least recently at
+address `192.168.110.137`.
+
+# Backend Server
+
+Backend server is a `t2.micro` AWS instance running with DynDNS
+address `eg15nsp.hopto.org`.
