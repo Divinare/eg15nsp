@@ -95,3 +95,43 @@ output):
 Then you should be able to access also the REST API:
 
     $ wget -qO- http://localhost:3000/
+
+# HackLab Environment und das Blinkenlichts
+
+*This is just notes to keep them somewhere accessible.*
+
+Raspi is on `Hacklab` network, using DHCP, at least recently at
+address `192.168.110.137`. Login to it is user `pi` with password
+`pee1aiQuiuFo`. Please, after login, set up your own account with:
+
+    sudo -s
+    useradd -m -G sudo,i2c,spi,gpio <username>
+    passwd <username>
+
+Blinking of leds using the SPI bus:
+
+    cd ~santtu/spincl
+    d=0.5; while true; do; ./spincl -ib -m0 -c0 -s0 -p0 2 0x30 0x00; sleep $d; ./spincl -ib -m0 -c0 -s0 -p0 2 0x3f 0xff; sleep $d; done
+
+This assumes that SPI bus is connected, and CE0 is connected to CS of
+the DAC. E.g.
+
+    Raspi pin       <--->      MCP4821 pin
+	19 (MOSI)                  4 (SDI)
+	23 (SCKL)                  3 (SCK)
+    24 (CE0)                   2 (C̅S̅)
+
+Also on MCP4821 you'll need to
+
+* Connect VDD and VSS to +5V and GND on Raspi, also add a small
+  capacitor betweed VDD and GND and VOUT and GND
+* Connect L̅D̅A̅C̅ to GND (VSS)
+
+When connecting DAC (MCP4821) to the MOSFET driver board, remember
+that you'll need to connect grounds from **both** Raspi and the LED
+power transformer!
+
+# Backend Server
+
+Backend server is a `t2.micro` AWS instance running with DynDNS
+address `eg15nsp.hopto.org`.

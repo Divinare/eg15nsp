@@ -19,7 +19,24 @@ var Sensor = Database.sequelize.define('Sensor', {
   description: Database.DataTypes.TEXT
 });
 
+var Control = Database.sequelize.define('Control', {
+  id: { type: Database.DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+  device_id: Database.DataTypes.INTEGER,
+  type: Database.DataTypes.STRING,
+  description: Database.DataTypes.TEXT
+});
+
+var Value = Database.sequelize.define('Value', {
+  control_id: Database.DataTypes.INTEGER,
+  current: Database.DataTypes.FLOAT,
+  target: Database.DataTypes.FLOAT,
+  current_time: Database.DataTypes.DATE,
+  target_time: Database.DataTypes.DATE
+});
+
 module.exports = {
 	Measurement: Measurement,
-	Sensor: Sensor
+	Sensor: Sensor,
+  Control: Control,
+  Value: Value
 };

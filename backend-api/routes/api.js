@@ -27,3 +27,9 @@ exports.sensors = function (req, res) {
 		res.json(sensors);
 	});
 };
+
+exports.controls = function (req, res) {
+	Models.Control.findAll().then(function(controls){
+		res.json(controls);
+	});
+};
