@@ -6,10 +6,19 @@ import platform
 import math
 import json
 from datetime import datetime
+from subprocess import check_output
 import paho.mqtt.client as mqtt
+
+global logger
+
+def read_grove():
+    out = check_output(['grove/grove'])
+    logger.debug("grove/grove output: %r", out)
+    return json.loads(out.decode('utf-8'))
 
 def main():
     logging.basicConfig()
+    global logger
     logger = logging.getLogger('collector')
 
     parser = argparse.ArgumentParser(prog="collector")
@@ -58,7 +67,9 @@ def main():
             values['temperature'] = "%.2f" % (23.5 + math.sin(time.time() / 600) * 5,)
             logger.info("Sending mock temperature %s°C", values['temperature'])
         else:
-            pass
+            values['light'] = read_grove()['lux']
+
+        logger.debug("values: %r", values)
 
         for k, v in values.items():
             t = topic("sensor/" + k)

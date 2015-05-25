@@ -135,3 +135,38 @@ power transformer!
 
 Backend server is a `t2.micro` AWS instance running with DynDNS
 address `eg15nsp.hopto.org`.
+
+
+# Sensors
+
+## Grove Digital Light Sensor
+
+Grove digital light sensor pinout:
+
+1. GND
+2. VCC
+3. SDA
+4. SCL
+
+`raspi/grove/grove` is a program that will do five samples and output
+the values. `raspi/collector` knows how to use those values. Note that
+`requirements-2.txt` is probably not up to date at the moment (it
+works in the raspi, but probably not in a pristine environment).
+
+Output from `./collector --debug 1` with the light sensor:
+
+	~/eg15nsp/raspi eg15nsp $ ./collector 1 --debug
+	DEBUG:collector:args=Namespace(broker='localhost', broker_port=1883, id='1', interval=60, logging=10, mock=False)
+	DEBUG:collector:client=<paho.mqtt.client.Client object at 0xb69096f0>
+	DEBUG:collector:Measuring ...
+	DEBUG:collector:grove/grove output: b'{"lux": 0.0, "ir": 35078.0, "saturated": false, "ambient": 7777.2}\n'
+	DEBUG:collector:values: {'light': 0.0}
+	DEBUG:collector:Sending node/1/sensor/light = 0.0
+	DEBUG:collector:Sending alive signal to node/1/active
+	DEBUG:collector:Sleeping for 60s
+	DEBUG:collector:Measuring ...
+	DEBUG:collector:grove/grove output: b'{"lux": 202.07438, "ir": 20843.4, "saturated": false, "ambient": 35310.8}\n'
+	DEBUG:collector:values: {'light': 202.07438}
+	DEBUG:collector:Sending node/1/sensor/light = 202.07438
+	DEBUG:collector:Sending alive signal to node/1/active
+	DEBUG:collector:Sleeping for 60s
