@@ -37,7 +37,27 @@ exports.value = function (req, res) {
 	var controlId = req.params.id;
 	Models.Value.findOne({
 		where: { control_id: controlId}
-	}).then(function( controlValues) {
-		res.json(controlValues);
+	}).then(function( controlValue) {
+		res.json(controlValue);
 	})
 };
+
+exports.updateValue = function (req, res) {
+	var controlId = req.params.id;
+	Models.Value.findOne({
+		where: { control_id: controlId}
+	}).then(function( controlValue) {
+		console.log("props:");
+		for(prop in req.body) {
+			 if(prop == "current" || prop == "target" || prop == "current_time" || prop == "target_time") {
+			      controlValue[prop] = req.body[prop];
+			 }
+		}
+		controlValue.save(function(err) {
+	        if (err) {
+	           return res.send(err);
+	        }
+		res.send(200);
+		});
+	});
+}

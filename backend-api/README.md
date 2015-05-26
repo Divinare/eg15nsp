@@ -3,7 +3,7 @@
 sqlite3 shared/database.sqlite <schema.sql
 
 
-## Routes explained:
+## API description:
 
 GET /api/sensors
 
@@ -24,6 +24,17 @@ GET /api/controls
 GET /api/value/:id
 
 -> Returns: value of a control with certain id (each control has one row of values)
+
+PUT /api/value/:id
+
+Only these fields can be changed: current, target, current_time, target_time
+
+example:
+{
+    "target": 0.85,
+    "current_time": "2015-05-18T12:30:00.000Z",
+    "target_time": "2015-05-18T12:30:00.000Z"
+}
 
 ## License
 MIT

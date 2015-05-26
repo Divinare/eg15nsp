@@ -32,6 +32,7 @@ app.get('/api/measurements/:id', api.measurement);
 
 app.get('/api/controls', api.controls);
 app.get('/api/controls/:id', api.value);
+app.put('/api/controls/:id', api.updateValue);
 
 //app.get('api/lightlevel', api.lightlevel);
 //app.post('/api/lightlevel/', api.lightlevel);
