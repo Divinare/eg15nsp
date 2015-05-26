@@ -19,7 +19,6 @@ exports.measurement = function( req, res) {
 	}).then(function( sensor) {
 		res.json(sensor);
 	})
-
 }
 
 exports.sensors = function (req, res) {
@@ -32,4 +31,13 @@ exports.controls = function (req, res) {
 	Models.Control.findAll().then(function(controls){
 		res.json(controls);
 	});
+};
+
+exports.value = function (req, res) {
+	var controlId = req.params.id;
+	Models.Value.findOne({
+		where: { control_id: controlId}
+	}).then(function( controlValues) {
+		res.json(controlValues);
+	})
 };

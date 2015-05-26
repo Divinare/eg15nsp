@@ -39,6 +39,7 @@ CREATE TABLE controls (
        FOREIGN KEY(device_id) REFERENCES devices (id));
 
 CREATE TABLE `values` (
+       id INTEGER NOT NULL,
        control_id INTEGER NOT NULL,
        current DOUBLE,
        target DOUBLE,
@@ -60,12 +61,11 @@ INSERT INTO measurements (id, device_id, sensor_id, sensed_time, stored_time, va
        (5, 1, 1, '2015-05-11T11:07:00', '2015-05-11T11:07:00', 24.1);
 INSERT INTO controls (id, device_id, type, description) VALUES
        (1, 1, 'light/red', 'RED led'),
-       (2, 1, 'light/green', 'GREEN led'),
-       (3, 1, 'light/blue', 'BLUE led'),
-       (4, 1, 'light/uv', 'UV led');
- INSERT INTO `values` (control_id, target, target_time) VALUES
-       (1, .5, '2015-05-18T12:30'),
-       (2, .5, '2015-05-18T12:30'),
-       (3, .5, '2015-05-18T12:30'),
-       (4, .5, '2015-05-18T12:30');
-       
+       (2, 1, 'light/green', 'RED led'),
+       (3, 1, 'light/blue', 'RED led'),
+       (4, 1, 'light/uv', 'RED led');
+ INSERT INTO `values` (id, control_id, target, target_time) VALUES
+       (1, 1, .5, '2015-05-18T12:30'),
+       (2, 2, .5, '2015-05-18T12:30'),
+       (3, 3, .5, '2015-05-18T12:30'),
+       (4, 4, .5, '2015-05-18T12:30');
