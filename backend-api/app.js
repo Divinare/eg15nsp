@@ -30,8 +30,7 @@ app.get('/api/measurements', api.measurements);
 app.get('/api/measurements/:id', api.measurement);
 
 app.get('/api/controls', api.controls);
-
-//app.get('api/lightlevel', api.lightlevel);
+app.get('api/controls/:id, api.value);
 
 //app.post('/api/lightlevel/', api.lightlevel);
 
