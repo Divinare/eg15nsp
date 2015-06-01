@@ -109,6 +109,10 @@ To deploy a new version of the code use:
     $ git pull
     $ make setup-backend deploy-backend
 
+The instance has ports 22 (SSH) and 1883 (MQTT) exposed. The API port
+3000 is **not** public, so if you want to access it use SSH port
+forwarding.
+
 # HackLab Environment und das Blinkenlichts
 
 *This is just notes to keep them somewhere accessible.*
