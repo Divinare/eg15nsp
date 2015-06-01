@@ -170,3 +170,34 @@ Output from `./collector --debug 1` with the light sensor:
 	DEBUG:collector:Sending node/1/sensor/light = 202.07438
 	DEBUG:collector:Sending alive signal to node/1/active
 	DEBUG:collector:Sleeping for 60s
+
+# Raspi to DAC to RGB drivers
+
+LEDs are driven by a separate driver with a MOSFET, one for each
+color. The driver gets its input from a DAC which in turn is driven
+from Raspi via SPI bus. Thus the connections are:
+
+    Raspi pin       <--->      MCP4821 pin
+	19 (MOSI)                  4 (SDI)
+	23 (SCKL)                  3 (SCK)
+    24 (CE0)                   2 (C̅S̅)
+
+Note that `CE0` needs to be changed to `CE1` and other lines, one for
+each separate DAC.
+
+From MCP4821 to the LED driver the pins are:
+
+    MCP4821 pin     <--->      LED driver
+	8 (VOUT)                   1 (DAC IN)
+
+The pins in the LED driver are (watch for the orientation!!!):
+
+    LED driver
+    1  DAC IN
+	2  GND
+	3  GND
+	4  VIN (+12 V)
+	5  LED-
+	6  LED+ 1 (for one LED series)
+	7  LED+ 2 (another)
+	8  LED+ 3 (third)
