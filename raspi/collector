@@ -16,6 +16,11 @@ def read_grove():
     logger.debug("grove/grove output: %r", out)
     return json.loads(out.decode('utf-8'))
 
+def read_tmp006():
+    out = check_output(['tmp006/tmp006'])
+    logger.debug("tmp006/tmp006 output: %r", out)
+    return json.loads(out.decode('utf-8'))
+
 def main():
     logging.basicConfig()
     global logger
@@ -68,6 +73,7 @@ def main():
             logger.info("Sending mock temperature %s°C", values['temperature'])
         else:
             values['light'] = read_grove()['lux']
+            values['temperature'] = read_tmp006()['object']
 
         logger.debug("values: %r", values)
 
