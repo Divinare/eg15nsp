@@ -1,0 +1,9 @@
+description "EG15NSP API"
+setuid eg15nsp
+setgid eg15nsp
+start on net-device-up
+respawn
+console log
+env BACKEND_SQLITE_DB=/var/run/eg15nsp/database.sqlite
+chdir /usr/sbin/eg15nsp-api
+exec node app.js
