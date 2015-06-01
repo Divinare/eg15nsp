@@ -41,6 +41,9 @@ def main():
     parser.add_argument('--interval', '-i', default=60, type=int)
     parser.add_argument('--broker', '-b', default="localhost", type=str)
     parser.add_argument('--broker-port', '-p', default=1883, type=int)
+    parser.add_argument('--broker-user', '-U', type=str)
+    parser.add_argument('--broker-password', '-P', type=str)
+
     parser.add_argument('--mock', action='store_true', default=False,
                         help='Send mock temperature measurement values')
 
@@ -54,6 +57,10 @@ def main():
     logger.debug("args=%r", args)
 
     client = mqtt.Client()
+
+    if args.broker_user:
+        client.username_pw_set(args.broker_user, args.broker_password)
+
     client.connect(args.broker, args.broker_port)
     client.loop_start()
 

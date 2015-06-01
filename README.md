@@ -96,6 +96,12 @@ Then you should be able to access also the REST API:
 
     $ wget -qO- http://localhost:3000/
 
+## MQTT server
+
+The "global" MQTT server is located at `eg15nsp.hopto.org`. It
+requires authentication. The setup uses username `raspi` with password
+`Zi9koochiDah`.
+
 # HackLab Environment und das Blinkenlichts
 
 *This is just notes to keep them somewhere accessible.*
