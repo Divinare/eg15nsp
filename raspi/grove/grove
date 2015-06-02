@@ -9,7 +9,11 @@ import time
 REPEATS = 5
 
 def main():
-   sensor = tsl2561.Tsl2561(tsl2561.I2C_SMBUS, tsl2561.I2C_ADDRESS, debug=0)
+   try:
+      sensor = tsl2561.Tsl2561(tsl2561.I2C_SMBUS, tsl2561.I2C_ADDRESS, debug=0)
+   except tsl2561.DeviceNotFound:
+      print("ERROR: Grove light sensor not found", file=sys.stderr)
+      sys.exit(1)
 
    saturated = False
 
@@ -22,6 +26,8 @@ def main():
 
       ambient, ir, _ambient, _ir, _lux = sensor.readLux(0) # auto gain
       saturated |= ambient >= 0xffff or ir >= 0xffff
+
+      print(ambient, ir, _ambient, _ir, _lux)
 
       ambients.append(ambient)
       irs.append(ir)

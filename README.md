@@ -128,6 +128,7 @@ address `192.168.110.137`. Login to it is user `pi` with password
 Blinking of leds using the SPI bus:
 
     cd ~santtu/spincl
+	sudo -s
     d=0.5; while true; do; ./spincl -ib -m0 -c0 -s0 -p0 2 0x30 0x00; sleep $d; ./spincl -ib -m0 -c0 -s0 -p0 2 0x3f 0xff; sleep $d; done
 
 This assumes that SPI bus is connected, and CE0 is connected to CS of

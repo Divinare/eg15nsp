@@ -159,6 +159,9 @@ _ambient = 0
 _IR      = 0
 _LUX     = None
 
+class DeviceNotFound(Exception):
+    pass
+
 
 class Tsl2561(object):
         i2c = None
@@ -166,8 +169,11 @@ class Tsl2561(object):
         def __init__(self, bus = I2C_SMBUS, addr = I2C_ADDRESS, debug = 1, pause = 0.8):  # set debug = 0 stops debugging output on screen
             assert(bus is not None)
             assert(addr > 0b000111 and addr < 0b1111000)
-
+            # monkeypatch time
             self.i2c     = Adafruit_I2C(addr)
+            def errMsg():
+                raise DeviceNotFound()
+            self.i2c.errMsg = errMsg
             self.pause   = pause
             self.debug   = debug
             self.gain    = None

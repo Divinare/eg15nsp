@@ -81,7 +81,12 @@ def main():
     for i in range(REPEATS):
         time.sleep(1)
 
-        to, td = sensor.readObjTempC(), sensor.readDieTempC()
+        try:
+            to, td = sensor.readObjTempC(), sensor.readDieTempC()
+        except IOError:
+            print("ERROR: Failed to read TMP006 temperature sensor",
+                  file=sys.stderr)
+            sys.exit(1)
 
         tos.append(to)
         tds.append(td)

@@ -6,7 +6,7 @@ import platform
 import math
 import json
 from datetime import datetime
-from subprocess import check_output
+from subprocess import check_output, CalledProcessError
 import paho.mqtt.client as mqtt
 
 global logger
@@ -79,8 +79,15 @@ def main():
             values['temperature'] = "%.2f" % (23.5 + math.sin(time.time() / 600) * 5,)
             logger.info("Sending mock temperature %s°C", values['temperature'])
         else:
-            values['light'] = read_grove()['lux']
-            values['temperature'] = read_tmp006()['object']
+            try:
+                values['light'] = read_grove()['lux']
+            except CalledProcessError:
+                logger.error("Failed to read Grove light sensor")
+
+            try:
+                values['temperature'] = read_tmp006()['object']
+            except CalledProcessError:
+                logger.error("Failed to read TMP006 temperature sensor")
 
         logger.debug("values: %r", values)
 
