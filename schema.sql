@@ -52,7 +52,8 @@ CREATE TABLE `values` (
 INSERT INTO devices (id, description, last_active) VALUES
        (1, 'Plant box', NULL);
 INSERT INTO sensors (id, device_id, type, description) VALUES
-       (1, 1, 'temperature', 'Temperature sensor');
+       (1, 1, 'temperature', 'Temperature sensor'),
+       (2, 1, 'light', 'Light level');
 INSERT INTO measurements (id, device_id, sensor_id, sensed_time, stored_time, value) VALUES
        (1, 1, 1, '2015-05-11T11:03:00', '2015-05-11T11:03:00', 24.5),
        (2, 1, 1, '2015-05-11T11:05:00', '2015-05-11T11:05:00', 24.8),
