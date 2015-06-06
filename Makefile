@@ -1,6 +1,11 @@
 DATABASE = shared/database.sqlite
 
 all:
+	$(MAKE) -C raspi all
+
+clean:
+	$(MAKE) -C raspi clean
+	if which docker-compose >/dev/null; then docker-compose kill && docker-compose rm -f; fi
 
 mock: $(DATABASE)
 	docker-compose build
