@@ -76,7 +76,7 @@ def main():
 
         ## TODO MEASUREMENTS HERE
         if args.mock:
-            values['temperature'] = "%.2f" % (23.5 + math.sin(time.time() / 600) * 5,)
+            values['temperature'] = "%.2f" % (100.0 + math.sin(time.time() / 600) * 5,)
             logger.info("Sending mock temperature %s°C", values['temperature'])
         else:
             try:
