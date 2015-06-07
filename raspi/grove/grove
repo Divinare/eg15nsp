@@ -27,7 +27,7 @@ def main():
       ambient, ir, _ambient, _ir, _lux = sensor.readLux(0) # auto gain
       saturated |= ambient >= 0xffff or ir >= 0xffff
 
-      print(ambient, ir, _ambient, _ir, _lux)
+      #print(ambient, ir, _ambient, _ir, _lux)
 
       ambients.append(ambient)
       irs.append(ir)
