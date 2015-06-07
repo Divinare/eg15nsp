@@ -12,9 +12,9 @@
  *
  *   setlight <CS> <LOW> <HIGH>
  *
- * This will go from LOW to HIGH in 1 second, then back from HIGH to
+ * This will go from LOW to HIGH in 10 seconds, then back from HIGH to
  * LOW. Intervals are equidistant, e.g. this generates a triangle
- * wave.
+ * wave. It tries to adjust to variable time in setting DACs etc.
  */
 
 #include <stdio.h>
@@ -22,6 +22,8 @@
 #include <string.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <assert.h>
+#include <time.h>
 
 #include <bcm2835.h>
 
@@ -49,6 +51,13 @@ void transfer(uint8_t cs, char* wbuf)
 {
   char rbuf[2];
 
+  if (cs == BCM2835_SPI_CS0 || cs == BCM2835_SPI_CS1) {
+    bcm2835_spi_chipSelect(cs);
+    bcm2835_spi_setChipSelectPolarity(cs, LOW);
+  } else {
+    bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
+  }
+
   if (cs == OUR_CS2 || cs == OUR_CS3)
     set(cs, LOW);
 
@@ -66,20 +75,38 @@ void encode(int value, char* wbuf)
 
 int main(int ac, char *av[])
 {
-  uint8_t cs = BCM2835_SPI_CS0;
+  int css[100] = {BCM2835_SPI_CS0};
+  int ncs = 1;
   int value = -1, low = -1, high = -1;
+  int i, debug = 0;
 
   if (ac > 1) {
-    int v = atoi(av[1]);
+    char *s;
+    int cs;
 
-    switch (v) {
-    case 0: cs = BCM2835_SPI_CS0; break;
-    case 1: cs = BCM2835_SPI_CS1; break;
-    case 2: cs = OUR_CS2; break;
-    case 3: cs = OUR_CS3; break;
-    default:
-      fprintf(stderr, "Invalid CS value %d\n", v);
+    ncs = 0;
+
+    for (s = strtok(av[1], ","); s != NULL; s = strtok(NULL, ",")) {
+      assert(ncs < 100);
+
+      int v = atoi(s);
+
+      switch (v) {
+      case 0: cs = BCM2835_SPI_CS0; break;
+      case 1: cs = BCM2835_SPI_CS1; break;
+      case 2: cs = OUR_CS2; break;
+      case 3: cs = OUR_CS3; break;
+      default:
+        fprintf(stderr, "Invalid CS value %d\n", v);
+      }
+
+      css[ncs++] = cs;
     }
+
+    for (i = 0; i < ncs; i++)
+      printf("<%d> ", css[i]);
+
+    printf("\n");
   }
 
   if (ac > 2)
@@ -102,53 +129,90 @@ int main(int ac, char *av[])
   bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);
   bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_65536);
 
-  if (cs == BCM2835_SPI_CS0 || cs == BCM2835_SPI_CS1) {
-    bcm2835_spi_chipSelect(cs);
-    bcm2835_spi_setChipSelectPolarity(cs, LOW);
-  } else {
-    bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
-  }
-
   /* blinkelichts mode? */
   if (value == -1) {
-
     char off[2] = { 0x3f, 0x00 };
     char on[2] = { 0x30, 0x00 };
     char rbuf[2];
 
     while (1) {
       fprintf(stderr, "1");
-      transfer(cs, on);
+      for (i = 0; i < ncs; i++)
+        transfer(css[i], on);
       sleep(1);
 
       fprintf(stderr, "0");
-      transfer(cs, off);
+      for (i = 0; i < ncs; i++)
+        transfer(css[i], off);
       sleep(1);
     }
   }
   /* triangle wave? */
   else if (low >= 0 && high > low) {
-    int interval = 1000000 * (1.0 / (high - low));
+    int interval = 5 * 1000000 * (1.0 / (high - low));
+    int step = 1;
 
     printf("interval = %d us", interval);
 
     while (1) {
       char wbuf[2];
+      struct timespec start, end;
+      long int measured;
 
-      for (value = low; value <= high; value++) {
+      for (value = low; value <= high; value += step) {
         fprintf(stderr, "+%d \r", value);
 
         encode(value, wbuf);
-        transfer(cs, wbuf);
-        usleep(interval);
+
+        clock_gettime(CLOCK_MONOTONIC, &start);
+
+        for (i = 0; i < ncs; i++)
+          transfer(css[i], wbuf);
+
+        clock_gettime(CLOCK_MONOTONIC, &end);
+
+        measured = (end.tv_sec - start.tv_sec) * 1.0e6 +
+          (end.tv_nsec - start.tv_nsec) / 1000.0 / step;
+
+        if (((float) measured / (float) interval) > 1.1) {
+          if (debug)
+            fprintf(stderr, "> s %d m %d i %d\n", step, measured, interval);
+          step++;
+        } else if (((float) measured / (float) interval) < 0.9) {
+          if (debug)
+            fprintf(stderr, "< s %d m %d i %d\n", step, measured, interval);
+          step--;
+        } else if (measured < interval) {
+          usleep(interval - measured);
+        }
       }
 
-      for (value = high - 1; value >= low; value--) {
+      for (value = high - 1; value >= low; value -= step) {
         fprintf(stderr, "-%d \r", value);
 
         encode(value, wbuf);
-        transfer(cs, wbuf);
-        usleep(interval);
+
+        clock_gettime(CLOCK_MONOTONIC, &start);
+
+        for (i = 0; i < ncs; i++)
+          transfer(css[i], wbuf);
+
+        clock_gettime(CLOCK_MONOTONIC, &end);
+
+        measured = (end.tv_sec - start.tv_sec) * 1.0e6 +
+          (end.tv_nsec - start.tv_nsec) / 1000.0 / step;
+
+        if (((float) measured / (float) interval) > 1.1) {
+          if (debug)
+            fprintf(stderr, "> s %d m %d i %d\n", step, measured, interval);
+          step++;
+        } else if (((float) measured / (float) interval) < 0.9) {
+          if (debug)
+            fprintf(stderr, "< s %d m %d i %d\n", step, measured, interval);
+          step--;
+        } else if (measured < interval) {
+          usleep(interval - measured);
+        }
       }
     }
   }
@@ -157,7 +221,8 @@ int main(int ac, char *av[])
   else {
     char wbuf[2];
     encode(value, wbuf);
-    transfer(cs, wbuf);
+    for (i = 0; i < ncs; i++)
+      transfer(css[i], wbuf);
 
     fprintf(stderr, "%02x %02x\n", wbuf[0], wbuf[1]);
   }
