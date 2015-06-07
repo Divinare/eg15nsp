@@ -219,3 +219,5 @@ The pins in the LED driver are (watch for the orientation!!!):
 	6  LED+ 1 (for one LED series)
 	7  LED+ 2 (another)
 	8  LED+ 3 (third)
+
+# LED parameters

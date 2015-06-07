@@ -1,7 +1,27 @@
+/*
+ * Usage:
+ *
+ *   setlight <CS>
+ *
+ * This will trigger 1 second on-off cycle.
+ *
+ *   setlight <CS> <VALUE>
+ *
+ * This will set the <CS> chip to the given value (valid values for
+ * 10-bit DAC are 0 to 4095).
+ *
+ *   setlight <CS> <LOW> <HIGH>
+ *
+ * This will go from LOW to HIGH in 1 second, then back from HIGH to
+ * LOW. Intervals are equidistant, e.g. this generates a triangle
+ * wave.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <unistd.h>
 
 #include <bcm2835.h>
 
@@ -23,8 +43,7 @@ void set(uint8_t cs, uint8_t on)
     return;
   }
 
-  bcm2835_gpio_write(pin, on);
-}
+  bcm2835_gpio_write(pin, on);}
 
 void transfer(uint8_t cs, char* wbuf)
 {
@@ -39,10 +58,16 @@ void transfer(uint8_t cs, char* wbuf)
     set(cs, HIGH);
 }
 
+void encode(int value, char* wbuf)
+{
+  wbuf[0] = 0x30 | (value >> 8) & 0x0f;
+  wbuf[1] = value & 0xff;
+}
+
 int main(int ac, char *av[])
 {
   uint8_t cs = BCM2835_SPI_CS0;
-  int value = -1;
+  int value = -1, low = -1, high = -1;
 
   if (ac > 1) {
     int v = atoi(av[1]);
@@ -60,6 +85,11 @@ int main(int ac, char *av[])
   if (ac > 2)
     value = atoi(av[2]);
 
+  if (ac > 3) {
+    low = value;
+    high = atoi(av[3]);
+  }
+
   if (!bcm2835_init())
     return 1;
 
@@ -75,6 +105,8 @@ int main(int ac, char *av[])
   if (cs == BCM2835_SPI_CS0 || cs == BCM2835_SPI_CS1) {
     bcm2835_spi_chipSelect(cs);
     bcm2835_spi_setChipSelectPolarity(cs, LOW);
+  } else {
+    bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
   }
 
   /* blinkelichts mode? */
@@ -94,11 +126,37 @@ int main(int ac, char *av[])
       sleep(1);
     }
   }
+  /* triangle wave? */
+  else if (low >= 0 && high > low) {
+    int interval = 1000000 * (1.0 / (high - low));
+
+    printf("interval = %d us", interval);
+
+    while (1) {
+      char wbuf[2];
+
+      for (value = low; value <= high; value++) {
+        fprintf(stderr, "+%d \r", value);
+
+        encode(value, wbuf);
+        transfer(cs, wbuf);
+        usleep(interval);
+      }
+
+      for (value = high - 1; value >= low; value--) {
+        fprintf(stderr, "-%d \r", value);
+
+        encode(value, wbuf);
+        transfer(cs, wbuf);
+        usleep(interval);
+      }
+    }
+  }
+
   /* set the given value instead then */
   else {
     char wbuf[2];
-    wbuf[0] = 0x30 | (value >> 8) & 0x0f;
-    wbuf[1] = value & 0xff;
+    encode(value, wbuf);
     transfer(cs, wbuf);
 
     fprintf(stderr, "%02x %02x\n", wbuf[0], wbuf[1]);
