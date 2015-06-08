@@ -23,13 +23,12 @@ deploy-backend:
 	cp backend-broker/mosquitto*.conf /etc/mosquitto
 	echo "log_dest syslog" >>/etc/mosquitto/mosquitto.conf
 	service mosquitto restart
-	mkdir -p /var/run/mosquitto
-	chown mosquitto /var/run/mosquitto
+	mkdir -p /var/mosquitto
+	chown mosquitto /var/mosquitto
 	id eg15nsp 2>/dev/null >/dev/null || useradd eg15nsp
-	mkdir -p /var/run/eg15nsp
-	rm -f /var/run/eg15nsp/database.sqlite
-	sqlite3 /var/run/eg15nsp/database.sqlite <schema.sql
-	chown -R eg15nsp:eg15nsp /var/run/eg15nsp
+	mkdir -p /var/eg15nsp
+	if [ ! -e /var/eg15nsp/database.sqlite ]; then rm -f /var/eg15nsp/database.sqlite;  sqlite3 /var/eg15nsp/database.sqlite <schema.sql; fi
+	chown -R eg15nsp:eg15nsp /var/eg15nsp
 	cp backend-storer/storer.conf.init /etc/init/storer.conf
 	cp backend-storer/storer /usr/sbin/eg15nsp-storer
 	service storer restart
