@@ -6,10 +6,24 @@ import platform
 import math
 import json
 from datetime import datetime
+from subprocess import check_output, CalledProcessError
 import paho.mqtt.client as mqtt
+
+global logger
+
+def read_grove():
+    out = check_output(['grove/grove'])
+    logger.debug("grove/grove output: %r", out)
+    return json.loads(out.decode('utf-8'))
+
+def read_tmp006():
+    out = check_output(['tmp006/tmp006'])
+    logger.debug("tmp006/tmp006 output: %r", out)
+    return json.loads(out.decode('utf-8'))
 
 def main():
     logging.basicConfig()
+    global logger
     logger = logging.getLogger('collector')
 
     parser = argparse.ArgumentParser(prog="collector")
@@ -27,6 +41,9 @@ def main():
     parser.add_argument('--interval', '-i', default=60, type=int)
     parser.add_argument('--broker', '-b', default="localhost", type=str)
     parser.add_argument('--broker-port', '-p', default=1883, type=int)
+    parser.add_argument('--broker-user', '-U', type=str)
+    parser.add_argument('--broker-password', '-P', type=str)
+
     parser.add_argument('--mock', action='store_true', default=False,
                         help='Send mock temperature measurement values')
 
@@ -40,6 +57,10 @@ def main():
     logger.debug("args=%r", args)
 
     client = mqtt.Client()
+
+    if args.broker_user:
+        client.username_pw_set(args.broker_user, args.broker_password)
+
     client.connect(args.broker, args.broker_port)
     client.loop_start()
 
@@ -55,10 +76,20 @@ def main():
 
         ## TODO MEASUREMENTS HERE
         if args.mock:
-            values['temperature'] = "%.2f" % (23.5 + math.sin(time.time() / 600) * 5,)
+            values['temperature'] = "%.2f" % (100.0 + math.sin(time.time() / 600) * 5,)
             logger.info("Sending mock temperature %s°C", values['temperature'])
         else:
-            pass
+            try:
+                values['light'] = read_grove()['lux']
+            except CalledProcessError:
+                logger.error("Failed to read Grove light sensor")
+
+            try:
+                values['temperature'] = read_tmp006()['object']
+            except CalledProcessError:
+                logger.error("Failed to read TMP006 temperature sensor")
+
+        logger.debug("values: %r", values)
 
         for k, v in values.items():
             t = topic("sensor/" + k)

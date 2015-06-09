@@ -96,6 +96,23 @@ Then you should be able to access also the REST API:
 
     $ wget -qO- http://localhost:3000/
 
+## eg15nsp.hopto.org server
+
+The "global" MQTT server is located at `eg15nsp.hopto.org`. It
+requires authentication. The setup uses username `raspi` with password
+`Zi9koochiDah`.
+
+To deploy a new version of the code use:
+
+    $ ssh -A eg15nsp.hopto.org
+    $ cd eg15nsp
+    $ git pull
+    $ make setup-backend deploy-backend
+
+The instance has ports 22 (SSH) and 1883 (MQTT) exposed. The API port
+3000 is **not** public, so if you want to access it use SSH port
+forwarding.
+
 # HackLab Environment und das Blinkenlichts
 
 *This is just notes to keep them somewhere accessible.*
@@ -111,6 +128,7 @@ address `192.168.110.137`. Login to it is user `pi` with password
 Blinking of leds using the SPI bus:
 
     cd ~santtu/spincl
+	sudo -s
     d=0.5; while true; do; ./spincl -ib -m0 -c0 -s0 -p0 2 0x30 0x00; sleep $d; ./spincl -ib -m0 -c0 -s0 -p0 2 0x3f 0xff; sleep $d; done
 
 This assumes that SPI bus is connected, and CE0 is connected to CS of
@@ -135,3 +153,71 @@ power transformer!
 
 Backend server is a `t2.micro` AWS instance running with DynDNS
 address `eg15nsp.hopto.org`.
+
+
+# Sensors
+
+## Grove Digital Light Sensor
+
+Grove digital light sensor pinout:
+
+1. GND
+2. VCC
+3. SDA
+4. SCL
+
+`raspi/grove/grove` is a program that will do five samples and output
+the values. `raspi/collector` knows how to use those values. Note that
+`requirements-2.txt` is probably not up to date at the moment (it
+works in the raspi, but probably not in a pristine environment).
+
+Output from `./collector --debug 1` with the light sensor:
+
+	~/eg15nsp/raspi eg15nsp $ ./collector 1 --debug
+	DEBUG:collector:args=Namespace(broker='localhost', broker_port=1883, id='1', interval=60, logging=10, mock=False)
+	DEBUG:collector:client=<paho.mqtt.client.Client object at 0xb69096f0>
+	DEBUG:collector:Measuring ...
+	DEBUG:collector:grove/grove output: b'{"lux": 0.0, "ir": 35078.0, "saturated": false, "ambient": 7777.2}\n'
+	DEBUG:collector:values: {'light': 0.0}
+	DEBUG:collector:Sending node/1/sensor/light = 0.0
+	DEBUG:collector:Sending alive signal to node/1/active
+	DEBUG:collector:Sleeping for 60s
+	DEBUG:collector:Measuring ...
+	DEBUG:collector:grove/grove output: b'{"lux": 202.07438, "ir": 20843.4, "saturated": false, "ambient": 35310.8}\n'
+	DEBUG:collector:values: {'light': 202.07438}
+	DEBUG:collector:Sending node/1/sensor/light = 202.07438
+	DEBUG:collector:Sending alive signal to node/1/active
+	DEBUG:collector:Sleeping for 60s
+
+# Raspi to DAC to RGB drivers
+
+LEDs are driven by a separate driver with a MOSFET, one for each
+color. The driver gets its input from a DAC which in turn is driven
+from Raspi via SPI bus. Thus the connections are:
+
+    Raspi pin       <--->      MCP4821 pin
+	19 (MOSI)                  4 (SDI)
+	23 (SCKL)                  3 (SCK)
+    24 (CE0)                   2 (C̅S̅)
+
+Note that `CE0` needs to be changed to `CE1` and other lines, one for
+each separate DAC.
+
+From MCP4821 to the LED driver the pins are:
+
+    MCP4821 pin     <--->      LED driver
+	8 (VOUT)                   1 (DAC IN)
+
+The pins in the LED driver are (watch for the orientation!!!):
+
+    LED driver
+    1  DAC IN
+	2  GND
+	3  GND
+	4  VIN (+12 V)
+	5  LED-
+	6  LED+ 1 (for one LED series)
+	7  LED+ 2 (another)
+	8  LED+ 3 (third)
+
+# LED parameters

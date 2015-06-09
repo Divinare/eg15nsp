@@ -27,6 +27,7 @@ var Control = Database.sequelize.define('Control', {
 });
 
 var Value = Database.sequelize.define('Value', {
+  id: { type: Database.DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
   control_id: Database.DataTypes.INTEGER,
   current: Database.DataTypes.FLOAT,
   target: Database.DataTypes.FLOAT,

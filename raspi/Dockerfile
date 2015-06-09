@@ -1,8 +1,8 @@
 FROM ubuntu:14.04
 WORKDIR /data
-RUN apt-get update && apt-get install -y python3-pip
-ADD requirements.txt /data/
-RUN pip3 install -r requirements.txt
-ADD collector /data/
-CMD ./collector --broker broker --interval 30 --mock 1
+RUN apt-get update
+ADD setup/ /data/setup/
+RUN ./setup/setup.sh
+ADD . /data/
+CMD ./collector --broker broker --broker-user raspi --broker-password Zi9koochiDah --interval 30 --mock 1 --debug
 ENV LANG C.UTF-8

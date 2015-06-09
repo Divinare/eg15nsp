@@ -2,6 +2,8 @@
 DROP TABLE IF EXISTS measurements;
 DROP TABLE IF EXISTS sensors;
 DROP TABLE IF EXISTS devices;
+DROP TABLE IF EXISTS controls;
+DROP TABLE IF EXISTS `values`;
 
 CREATE TABLE devices ( -- pot
        id INTEGER NOT NULL,
@@ -33,36 +35,39 @@ CREATE TABLE controls (
        device_id INTEGER NOT NULL,
        type VARCHAR(32) NOT NULL,
        description TEXT,
-       PRIMARY KEY(id)
+       PRIMARY KEY(id),
        FOREIGN KEY(device_id) REFERENCES devices (id));
 
-CREATE TABLE values (
+CREATE TABLE `values` (
+       id INTEGER NOT NULL,
        control_id INTEGER NOT NULL,
        current DOUBLE,
        target DOUBLE,
        current_time DATETIME,
        target_time DATETIME,
-       PRIMARY KEY(control_id) REFERENCES controls (id));
+       UNIQUE(control_id),
+       FOREIGN KEY(control_id) REFERENCES controls (id));
 
--- dummy test data
 INSERT INTO devices (id, description, last_active) VALUES
-       (1, 'Plant box', NULL);
+       (1, 'Plant box', NULL),
+       (2, 'Mock box', NULL);
 INSERT INTO sensors (id, device_id, type, description) VALUES
-       (1, 1, 'temperature', 'Temperature sensor');
-INSERT INTO measurements (id, device_id, sensor_id, sensed_time, createdAt, updatedAt, stored_time, value) VALUES
-       (1, 1, 1, '2015-05-11T11:03:00', '2015-05-11T11:03:00', 24.5),
-       (2, 1, 1, '2015-05-11T11:05:00', '2015-05-11T11:05:00', 24.8),
-       (3, 1, 1, '2015-05-11T11:06:00', '2015-05-11T11:07:00', 24.2),
-       (4, 1, 1, '2015-05-11T11:06:30', '2015-05-11T11:07:00', 23.9),
-       (5, 1, 1, '2015-05-11T11:07:00', '2015-05-11T11:07:00', 24.1);
+       (1, 1, 'temperature', 'Temperature sensor'),
+       (2, 1, 'light', 'Luminosity sensor'),
+       (3, 2, 'temperature', 'Mock temperature sensor');
+INSERT INTO measurements (id, device_id, sensor_id, sensed_time, stored_time, value) VALUES
+       (1, 2, 3, '2015-05-11T11:03:00', '2015-05-11T11:03:00', 24.5),
+       (2, 2, 3, '2015-05-11T11:05:00', '2015-05-11T11:05:00', 24.8),
+       (3, 2, 3, '2015-05-11T11:06:00', '2015-05-11T11:07:00', 24.2),
+       (4, 2, 3, '2015-05-11T11:06:30', '2015-05-11T11:07:00', 23.9),
+       (5, 2, 3, '2015-05-11T11:07:00', '2015-05-11T11:07:00', 24.1);
 INSERT INTO controls (id, device_id, type, description) VALUES
        (1, 1, 'light/red', 'RED led'),
        (2, 1, 'light/green', 'RED led'),
        (3, 1, 'light/blue', 'RED led'),
        (4, 1, 'light/uv', 'RED led');
- INSERT INTO values (control_id, target, target_time) VALUES
-       (1, .5, '2015-05-18T12:30'),
-       (2, .5, '2015-05-18T12:30'),
-       (3, .5, '2015-05-18T12:30'),
-       (4, .5, '2015-05-18T12:30');
-       
+ INSERT INTO `values` (id, control_id, target, target_time) VALUES
+       (1, 1, .5, '2015-05-18T12:30'),
+       (2, 2, .5, '2015-05-18T12:30'),
+       (3, 3, .5, '2015-05-18T12:30'),
+       (4, 4, .5, '2015-05-18T12:30');

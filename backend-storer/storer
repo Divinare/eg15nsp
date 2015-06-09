@@ -34,6 +34,8 @@ def main():
 
     parser.add_argument('--broker', '-b', default="localhost", type=str)
     parser.add_argument('--broker-port', '-p', default=1883, type=int)
+    parser.add_argument('--broker-user', '-U', type=str)
+    parser.add_argument('--broker-password', '-P', type=str)
 
     parser.set_defaults(logging=logging.INFO)
     args = parser.parse_args()
@@ -46,6 +48,10 @@ def main():
     logger.debug("engine=%r new_session=%r", engine, new_session)
 
     client = mqtt.Client()
+
+    if args.broker_user:
+        client.username_pw_set(args.broker_user, args.broker_password)
+
     logger.debug("client=%r", client)
     client.connect(args.broker, args.broker_port)
 

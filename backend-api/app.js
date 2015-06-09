@@ -26,13 +26,15 @@ if (env === 'production') {
 
 // API Routes
 app.get('/api/sensors', api.sensors);
+
 app.get('/api/measurements', api.measurements);
 app.get('/api/measurements/:id', api.measurement);
 
 app.get('/api/controls', api.controls);
+app.get('/api/controls/:id', api.value);
+app.put('/api/controls/:id', api.updateValue);
 
 //app.get('api/lightlevel', api.lightlevel);
-
 //app.post('/api/lightlevel/', api.lightlevel);
 
 http.createServer(app).listen(app.get('port'), function () {
