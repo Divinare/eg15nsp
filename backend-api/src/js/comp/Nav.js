@@ -1,8 +1,10 @@
 var React = require('react');
+var moment = require('moment');
 
 var Navigation = React.createClass({
 
   render: function() {
+    var today = moment().format('dddd');
     return (
       <div className="contain-to-grid sticky">
         <nav className="top-bar" data-topbar role="navigation" data-options="sticky_on: large">
@@ -19,8 +21,11 @@ var Navigation = React.createClass({
 
             <section className="top-bar-section">
               <ul className="right">
+              <li>
+                <a>{today}</a>
+              </li>
                 <li className="">
-                  <a href="#" className="">
+                  <a onClick={this.props.fancy} href="#" className="">
                     <span className="fi-social-squidoo"/> Fancy Button
                   </a>
                 </li>
